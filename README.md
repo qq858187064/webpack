@@ -7,3 +7,5 @@ npm install webpack --save-dev
 npm install style-loader css-loader --save-dev
 npm install extract-text-webpack-plugin –-save-dev
 4、创建webpack.config.js写入入口、输出配置
+5、....
+6、运行 webpack app/main.js public/bundle.js --modedevelopment
