@@ -1,10 +1,11 @@
+const path = require('path');
 // 引入css 单独打包插件
-var packCSS = new ExtractTextPlugin('./css/[name].min.css'); 
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
+
 module.exports={
 	entry:'./app/main.js',
 	output:{
-		path:'E:\\webpackTest\\public',
+		path:path.resolve(__dirname, 'public'),//'E:\\webpackTest\\public',
 		filename:'bundle.js'
 	},
 	　　plugins: [
@@ -13,6 +14,11 @@ module.exports={
 　　],
 　　module: {
 	 rules: [
+	       {
+        test: /\.vue$/,
+        loader: 'vue-loader'/*,const vueLoaderConfig = require('./vue-loader.conf')
+        options: vueLoaderConfig*/
+      },
       {
         test: /\.css$/,
         use: ExtractTextPlugin.extract({
@@ -21,5 +27,10 @@ module.exports={
         })
       }
     ]
-　　}
+　　},//防止重复
+  optimization: {
+     splitChunks: {
+       chunks: 'all'
+     }
+   }
 };

@@ -12,6 +12,12 @@
     "css-loader": "^2.1.1",
     "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "style-loader": "^0.23.1",
+    "vue": "^2.6.10",
+    "vue-router": "^3.0.6",
     "webpack": "^4.32.2"
+  },
+  "dependencies": {
+    "vue-loader": "^15.7.0",
+    "vue-template-compiler": "^2.6.10"
   }
 }

@@ -1,1 +1,0 @@
- webpack app/main.js public/bundle.js --modedevelopment
