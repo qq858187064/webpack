@@ -36,13 +36,19 @@ module.exports={
         },
       }
     ]
-　　},//防止重复
+　　},
+/*配置webpack-dev-server*/
+devServer:{
+	contentBase:'./public'
+}
+//防止重复
+/*
   optimization: {
      splitChunks: {
        chunks: 'all'
      }
-   },
+  },
    plugins:[new VueLoaderPlugin(),
        new ExtractTextPlugin("style.css"),
-   ] 
+   ] */
 };
