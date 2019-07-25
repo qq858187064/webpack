@@ -302,6 +302,17 @@ eval("// removed by extract-text-webpack-plugin\n\n//# sourceURL=webpack:///./sr
 
 /***/ }),
 
+/***/ "./src/css/c.css":
+/*!***********************!*\
+  !*** ./src/css/c.css ***!
+  \***********************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("// removed by extract-text-webpack-plugin\n\n//# sourceURL=webpack:///./src/css/c.css?");
+
+/***/ }),
+
 /***/ "./src/js/a.js":
 /*!*********************!*\
   !*** ./src/js/a.js ***!
@@ -346,7 +357,7 @@ eval("\n\nObject.defineProperty(exports, \"__esModule\", {\n  value: true\n});\n
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nvar _router = __webpack_require__(/*! ./js/router.js */ \"./src/js/router.js\");\n\nvar _router2 = _interopRequireDefault(_router);\n\nvar _app = __webpack_require__(/*! ./page/app.vue */ \"./src/page/app.vue\");\n\nvar _app2 = _interopRequireDefault(_app);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nvar a = __webpack_require__(/*! ./js/a.js */ \"./src/js/a.js\"); //main.js \n\nvar b = __webpack_require__(/*! ./js/b.js */ \"./src/js/b.js\");\n__webpack_require__(/*! ./css/a.css */ \"./src/css/a.css\");\n__webpack_require__(/*! ./css/b.css */ \"./src/css/b.css\");\nvar root = document.getElementById(\"root\");\nroot.appendChild(a());\nroot.appendChild(b());\nalert(123);\n\nvar vm = new Vue({\n    el: '#app',\n    router: _router2.default,\n    render: function render(c) {\n        return c(_app2.default);\n    }\n});\n\n//# sourceURL=webpack:///./src/main.js?");
+eval("\n\nvar _router = __webpack_require__(/*! ./js/router.js */ \"./src/js/router.js\");\n\nvar _router2 = _interopRequireDefault(_router);\n\nvar _app = __webpack_require__(/*! ./page/app.vue */ \"./src/page/app.vue\");\n\nvar _app2 = _interopRequireDefault(_app);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nvar a = __webpack_require__(/*! ./js/a.js */ \"./src/js/a.js\"); //main.js \n\nvar b = __webpack_require__(/*! ./js/b.js */ \"./src/js/b.js\");\n__webpack_require__(/*! ./css/a.css */ \"./src/css/a.css\");\n__webpack_require__(/*! ./css/b.css */ \"./src/css/b.css\");\n__webpack_require__(/*! ./css/c.css */ \"./src/css/c.css\");\nvar root = document.getElementById(\"root\");\nroot.appendChild(a());\nroot.appendChild(b());\nalert(123);\n\nvar vm = new Vue({\n    el: '#app',\n    router: _router2.default,\n    render: function render(c) {\n        return c(_app2.default);\n    }\n});\n\n//# sourceURL=webpack:///./src/main.js?");
 
 /***/ }),
 
