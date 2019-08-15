@@ -1,257 +1,3 @@
-一、新建一个项目目录，cd /d 定位进去，然后输入npm init，会提示你填写一些项目的信息，一直回车默认就好了，或者直接执行npm init -y 直接跳过，这样就在项目目录下生成了一个package.json文件。
-
-二、接下来就是通过npm安装项目依赖项，命令行输入：npm install babel-loader babel-core babel-plugin-transform-runtime babel-preset-es2015 babel-preset-stage-0 babel-runtime vue-loader vue-html-loader vue-hot-reload-api css-loader style-loader webpack webpack-dev-server --save-dev ，继续输入npm install vue@^1.0.26 --save 。
-
-这里注意的几个点如下：
-
-1.需要安装的依赖项视具体的项目需求来定，我只是安了几个必需的，后期会再加；
-
-2.输入之后如果一直报错或者光标一直在转动，要么是npm版本太低(需要3+)，要么将npm改成cnpm，如果没有安装淘宝NPM镜像，可以先输入npm install -g cnpm --registry=https://registry.npm.taobao.org，接着输入cnpm -v查看是否安装完成，然后就可以使用cnpm来代替npm；
-
-3.可以先修改package.json文件中的devDependencies和dependencies，然后再输入npm install进行一次性安装（偷懒的做法，嘿嘿）；
-
-4.dependencies中的vue默认安装2+，如果dependencies中的vue选择^1.0.26，那么devDependencies中对应的vue-loader最好选择^7.3.0，vue-hot-reload-api最好选择^1.2.0，否则就会报错；
-
-5.dependencies中的vue-router默认安装2+，无法识别router.map()这个方法，如果想要用回这个方法，最好选择^0.7.13；
-
-6.有时安装一个依赖项，会提示还需要一并安装别的依赖项，例如：如果要安装bootstrap-loader，会提示要求安装node-sass sass-loader resolve-url-loader；要安装less-loader，会提示要求安装less；
-
-完成这一步之后，会在项目目录下生成一个名node_modules的文件，对应的package.json文件中的内容变动如下（我额外添加了几个依赖项）：
-
-
-  "devDependencies": {
-    "autoprefixer-loader": "^3.2.0",
-    "babel-core": "^6.18.2",
-    "babel-loader": "^6.2.7",
-    "babel-plugin-transform-runtime": "^6.15.0",
-    "babel-preset-es2015": "^6.18.0",
-    "babel-preset-stage-0": "^6.16.0",
-    "babel-runtime": "^6.18.0",
-    "css-loader": "^0.25.0",
-    "debug": "^2.2.0",
-    "express": "^4.14.0",
-    "extract-text-webpack-plugin": "^1.0.1",
-    "file-loader": "^0.9.0",
-    "html-webpack-plugin": "^2.24.1",
-    "jquery": "^3.1.1",
-    "less": "^2.7.1",
-    "less-loader": "^2.2.3",
-    "style-loader": "^0.13.1",
-    "url-loader": "^0.5.7",
-    "vue-hot-reload-api": "^1.2.0",
-    "vue-html-loader": "^1.2.3",
-    "vue-loader": "^7.3.0",
-    "webpack": "^1.13.3",
-    "webpack-dev-middleware": "^1.8.4",
-    "webpack-dev-server": "^1.16.2",
-    "webpack-hot-middleware": "^2.13.1"
-  },
-  "dependencies": {
-    "vue": "^1.0.26",
-    "vue-router": "^0.7.13"
-  }
-
-三、在项目目录下新建一个名为src的目录，里面用于存放入口文件（index.js）、项目源文件（html,css,js,img之类的）、组件（.vue后缀），我的src目录结构大致如下：
-
-
-src
-  -entry
-      -index.js
-  -pages
-      -components
-      -css
-      -img
-      -js
-      -index.html
-  -public
-
-当然，有输入目录，就有输出目录，即在项目目录下新建一个output目录，用于放置生产出来的各种资源文件。
-
-四、在项目目录下新建一个名为build目录，里面用于存放各种配置文件，涉及到基础配置、开发和生产环境、静态服务器以及热加载，详细的内容请看下面的代码：
-
-1.webpack.config.js（基础配置文件）
-
-
-// 引入依赖模块
-var path = require('path');
-var webpack = require('webpack');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
-
-module.exports = {
-    // 入口文件，路径相对于本文件所在的位置，可以写成字符串、数组、对象
-    entry: {
-        // path.resolve([from ...], to) 将to参数解析为绝对路径
-        index:path.resolve(__dirname, '../src/entry/index.js'),
-        // 需要被提取为公共模块的群组
-        vendors:['vue','vue-router','jquery'],
-    },
-
-    // 输出配置
-    output: {
-        // 输出文件，路径相对于本文件所在的位置
-        path: path.resolve(__dirname, '../output/static/js/'),
-
-        // 设置publicPath这个属性会出现很多问题：
-        // 1.可以看成输出文件的另一种路径，差别路径是相对于生成的html文件；
-        // 2.也可以看成网站运行时的访问路径；
-        // 3.该属性的好处在于当你配置了图片CDN的地址，本地开发时引用本地的图片资源，上线打包时就将资源全部指向CDN了，如果没有确定的发布地址不建议配置该属性，特别是在打包图片时，路径很容易出现混乱，如果没有设置，则默认从站点根目录加载
-        // publicPath: '../static/js/',
-
-        // 基于文件的md5生成Hash名称的script来防止缓存
-        filename: '[name].[hash].js',
-        // 非主入口的文件名，即未被列在entry中，却又需要被打包出来的文件命名配置
-        chunkFilename: '[id].[chunkhash].js'
-    },
-
-    // 其他解决方案
-    resolve: {
-        // require时省略的扩展名，遇到.vue结尾的也要去加载
-        extensions: ['','.js', '.vue'],
-        // 模块别名地址，方便后续直接引用别名，无须写长长的地址，注意如果后续不能识别该别名，需要先设置root
-        alias:{}
-    },    
-
-    // 不进行打包的模块
-    externals:{},
-
-    // 模块加载器
-    module: {
-        // loader相当于gulp里的task，用来处理在入口文件中require的和其他方式引用进来的文件，test是正则表达式，匹配要处理的文件；loader匹配要使用的loader，"-loader"可以省略；include把要处理的目录包括进来，exclude排除不处理的目录       
-        loaders: [
-            //  使用vue-loader 加载 .vue 结尾的文件
-            {
-                test: /\.vue$/, 
-                loader: 'vue-loader',
-                exclude: /node_modules/    
-            },
-            // 使用babel 加载 .js 结尾的文件
-            {
-                test: /\.js$/,
-                loader: 'babel',
-                exclude: /node_modules/,
-                query:{
-                    presets: ['es2015', 'stage-0'],  
-                    plugins: ['transform-runtime']                      
-                }
-            }, 
-            // 使用css-loader和style-loader 加载 .css 结尾的文件
-            {  
-                test: /\.css$/,                  
-                // 将样式抽取出来为独立的文件
-                loader: ExtractTextPlugin.extract("style-loader", "css-loader!autoprefixer-loader"),
-                exclude: /node_modules/
-            },
-            // 使用less-loader、css-loader和style-loade 加载 .less 结尾的文件
-            {  
-                test: /\.less$/,                  
-                // 将样式抽取出来为独立的文件
-                loader: ExtractTextPlugin.extract("style-loader", "css-loader!autoprefixer-loader!less-loader"),
-                exclude: /node_modules/
-            },           
-            // 加载图片
-            {
-                test: /\.(png|jpg|gif)$/,
-                loader: 'url-loader',
-                query: {
-                    // 把较小的图片转换成base64的字符串内嵌在生成的js文件里
-                    limit: 10000,
-                    // 路径要与当前配置文件下的publicPath相结合
-                    name:'../img/[name].[ext]?[hash:7]'
-                }
-            },
-            // 加载图标
-            {
-                test: /\.(eot|woff|woff2|svg|ttf)([\?]?.*)$/,
-                loader: 'file-loader',
-                query: {               
-                    // 把较小的图标转换成base64的字符串内嵌在生成的js文件里    
-                    limit: 10000,
-                    name:'../fonts/[name].[ext]?[hash:7]',
-                    prefix:'font'
-                }
-            },              
-        ]         
-    },
-
-    // 配置插件项
-    plugins: []  
-}
-
-2.webpack.dev.config.js（开发环境下的配置文件）
-
-
-// 引入依赖模块
-var path = require('path');
-var webpack = require('webpack');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
-
-// 引入基本配置
-var config = require('./webpack.config.js');
-
-// 必须修改原配置中网站运行时的访问路径，相当于绝对路径，修改完之后，当前配置文件下的很多相对路径都是相对于这个来设定；
-// 注意：webpack-dev-server会实时的编译，但是最后的编译的文件并没有输出到目标文件夹，而是保存到了内存当中
-config.output.publicPath = '/';
-
-// 重新配置模块加载器
-config.module= {
-    // test是正则表达式，匹配要处理的文件；loader匹配要使用的loader，"-loader"可以省略；include把要处理的目录包括进来，exclude排除不处理的目录       
-    loaders: [
-        //  使用vue-loader 加载 .vue 结尾的文件
-        {
-            test: /\.vue$/, 
-            loader: 'vue-loader',
-            exclude: /node_modules/    
-        },
-        // 使用babel 加载 .js 结尾的文件
-        {
-            test: /\.js$/,
-            loader: 'babel',
-            exclude: /node_modules/,
-            query:{
-                presets: ['es2015', 'stage-0'],  
-                plugins: ['transform-runtime']                      
-            }
-        }, 
-        // 使用css-loader、autoprefixer-loader和style-loader 加载 .css 结尾的文件
-        {  
-            test: /\.css$/,                  
-            // 将样式抽取出来为独立的文件
-            loader: ExtractTextPlugin.extract("style-loader", "css-loader!autoprefixer-loader"),
-            exclude: /node_modules/
-        },
-        // 使用less-loader、autoprefixer-loader、css-loader和style-loade 加载 .less 结尾的文件
-        {  
-            test: /\.less$/,                  
-            // 将样式抽取出来为独立的文件
-            loader: ExtractTextPlugin.extract("style-loader", "css-loader!autoprefixer-loader!less-loader"),
-            exclude: /node_modules/
-        },           
-        // 加载图片
-        {
-            test: /\.(png|jpg|gif)$/,
-            loader: 'url-loader',
-            query: {
-                // 把较小的图片转换成base64的字符串内嵌在生成的js文件里
-                limit: 10000,
-                // 路径和生产环境下的不同，要与修改后的publickPath相结合
-                name: 'img/[name].[ext]?[hash:7]'
-            }
-        },
-        // 加载图标
-        {
-            test: /\.(eot|woff|woff2|svg|ttf)([\?]?.*)$/,
-            loader: 'file-loader',
-            query: {                   
-                limit: 10000,
-                // 路径和生产环境下的不同，要与修改后的publickPath相结合
-                name:'fonts/[name].[ext]?[hash:7]',
-                prefix:'font'
-            }
-        },              
-    ]         
-};
-
 // 重新配置插件项
 config.plugins = [
     // 位于开发环境下
@@ -260,41 +6,19 @@ config.plugins = [
             NODE_ENV: '"development"'
         }
     }),
-
-    // 自动生成html插件，如果创建多个HtmlWebpackPlugin的实例，就会生成多个页面
-    new HtmlWebpackPlugin({
-        // 生成html文件的名字，路径和生产环境下的不同，要与修改后的publickPath相结合，否则开启服务器后页面空白
-        filename: 'src/pages/index.html',
-        // 源文件，路径相对于本文件所在的位置
-        template: path.resolve(__dirname, '../src/pages/index.html'),
-        // 需要引入entry里面的哪几个入口，如果entry里有公共模块，记住一定要引入
-        chunks: ['vendors','index'],
-        // 要把<script>标签插入到页面哪个标签里(body|true|head|false)
-        inject: 'body',
-        // 生成html文件的标题
-        title:''
-        // hash如果为true，将添加hash到所有包含的脚本和css文件，对于解除cache很有用
-        // minify用于压缩html文件，其中的removeComments:true用于移除html中的注释，collapseWhitespace:true用于删除空白符与换行符
-    }),    
-
     // 提取css单文件的名字，路径和生产环境下的不同，要与修改后的publickPath相结合
     new ExtractTextPlugin("[name].[contenthash].css"),    
-
     // 提取入口文件里面的公共模块
     new webpack.optimize.CommonsChunkPlugin({
         name: 'vendors',
         filename: 'vendors.js',
     }),    
-
     // 为组件分配ID，通过这个插件webpack可以分析和优先考虑使用最多的模块，并为它们分配最小的ID
     new webpack.optimize.OccurenceOrderPlugin(),
-
     // 模块热替换插件
     new webpack.HotModuleReplacementPlugin(),
-
     // 允许错误不打断程序
     new webpack.NoErrorsPlugin(),
-
     // 全局挂载插件
     new webpack.ProvidePlugin({
         $:"jquery",
@@ -302,17 +26,14 @@ config.plugins = [
         "window.jQuery":"jquery"
     })        
 ];
-
 // vue里的css也要单独提取出来
 config.vue = {
     loaders: {
         css: ExtractTextPlugin.extract("css")
     }
 };
-
 // 启用source-map，开发环境下推荐使用cheap-module-eval-source-map
 config.devtool='cheap-module-eval-source-map';
-
 // 为了实现热加载，需要动态向入口配置中注入 webpack-hot-middleware/client ，路径相对于本文件所在的位置
 // var devClient = 'webpack-hot-middleware/client';
 // 为了修改html文件也能实现热加载，需要修改上面的devClient变量，引入同级目录下的dev-client.js文件
@@ -322,21 +43,10 @@ Object.keys(config.entry).forEach(function (name, i) {
     var extras = [devClient];
     config.entry[name] = extras.concat(config.entry[name]);
 })
-
 module.exports = config;
-
-3.webpack.prod.config.js（生产环境下的配置文件）
-
-
-// 引入依赖模块
-var path = require('path');
-var webpack = require('webpack');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
-
+//webpack.prod.config.js//（生产环境下的配置文件）
 // 引入基本配置
 var config = require('./webpack.config');
-
 // 重新配置插件项
 config.plugins = [
     // 位于生产环境下
@@ -345,32 +55,6 @@ config.plugins = [
             NODE_ENV: '"production"'
         }
     }),
-
-    // 自动生成html插件，如果创建多个HtmlWebpackPlugin的实例，就会生成多个页面
-    new HtmlWebpackPlugin({
-        // 生成html文件的名字，路径相对于输出文件所在的位置
-        filename: '../../html/index.html',
-        // 源文件，路径相对于本文件所在的位置
-        template: path.resolve(__dirname, '../src/pages/index.html'),
-        // 需要引入entry里面的哪几个入口，如果entry里有公共模块，记住一定要引入
-        chunks: ['vendors','special','index'],
-        // 要把<script>标签插入到页面哪个标签里(body|true|head|false)
-        inject: 'body',
-        // 生成html文件的标题
-        title:'',
-        // hash如果为true，将添加hash到所有包含的脚本和css文件，对于解除cache很有用
-        // minify用于压缩html文件，其中的removeComments:true用于移除html中的注释，collapseWhitespace:true用于删除空白符与换行符
-    }),      
-
-    // 提取css单文件的名字，路径相对于输出文件所在的位置
-    new ExtractTextPlugin("../css/[name].[contenthash].css"),    
-
-    // 提取入口文件里面的公共模块
-    new webpack.optimize.CommonsChunkPlugin({
-        name: 'vendors',
-        filename: 'vendors.js',
-    }),   
-    
     // 压缩js代码
     new webpack.optimize.UglifyJsPlugin({
         compress: {
@@ -380,39 +64,13 @@ config.plugins = [
         except:['$','exports','require']
     }),
 
-    // 为组件分配ID，通过这个插件webpack可以分析和优先考虑使用最多的模块，并为它们分配最小的ID
-    new webpack.optimize.OccurenceOrderPlugin(),
-
-    // 全局挂载插件，当模块使用这些变量的时候，wepback会自动加载，区别于window挂载
-    new webpack.ProvidePlugin({
-        $:"jquery",
-        jQuery:"jquery",
-        "window.jQuery":"jquery"
-    })   
 ];
-
-// vue里的css也要单独提取出来
-config.vue = {
-    loaders: {
-        css: ExtractTextPlugin.extract("css")
-    }
-};
-
 // 开启source-map，生产环境下推荐使用cheap-source-map或source-map，后者得到的.map文件体积比较大，但是能够完全还原以前的js代码
 config.devtool='source-map';
 // 关闭source-map
 // config.devtool=false;
-
 module.exports = config;
-
-4.dev-server.js（服务器配置文件）
-
-
-// 引入依赖模块
-var express = require('express');
-var webpack = require('webpack');
-var config = require('./webpack.dev.config.js');
-
+//.dev-server.js（服务器配置文件）
 // 创建一个express实例
 var app = express();
 
@@ -420,10 +78,8 @@ var app = express();
 app.get('/', function (req, res) {
     res.send('Hello World!');
 });
-
 // 调用webpack并把配置传递过去
 var compiler = webpack(config);
-
 // 使用 webpack-dev-middleware 中间件，搭建服务器
 var devMiddleware = require('webpack-dev-middleware')(compiler, {
     publicPath: config.output.publicPath,
@@ -432,10 +88,8 @@ var devMiddleware = require('webpack-dev-middleware')(compiler, {
         chunks: false
     }
 })
-
 // 使用 webpack-hot-middleware 中间件，实现热加载
 var hotMiddleware = require('webpack-hot-middleware')(compiler);
-
 // 为了修改html文件也能实现热加载，使用webpack插件来监听html源文件改变事件
 compiler.plugin('compilation', function (compilation) {
     compilation.plugin('html-webpack-plugin-after-emit', function (data, cb) {
@@ -444,7 +98,6 @@ compiler.plugin('compilation', function (compilation) {
         cb();
     })
 });
-
 // 注册中间件
 app.use(devMiddleware);
 app.use(hotMiddleware);
@@ -458,25 +111,123 @@ app.listen(8888, function (err) {
     console.log('Listening at http://localhost:8888');
 })
 
-5.dev-client.js（配合dev-server.js监听html文件改动也能够触发自动刷新）
-
-
+//.dev-client.js（配合dev-server.js监听html文件改动也能够触发自动刷新）
 // 引入 webpack-hot-middleware/client 
 var hotClient = require('webpack-hot-middleware/client');
-
 // 订阅事件，当 event.action === 'reload' 时执行页面刷新
 hotClient.subscribe(function (event) {
     if (event.action === 'reload') {
         window.location.reload();
     }
 })
-
-五、为了不必每次构建项目都要输入webpack --display-modules --display-chunks --config build/webpack.config.js这条长命令，我们在package.js文件中修改“scripts”项：
-
+// 指定构建别名：webpack --display-modules --display-chunks --config build/webpack.config.js这条长命令，我们在package.js文件中修改“scripts”项：
 "scripts": {
   "build":"webpack --display-modules --display-chunks --config build/webpack.config.js",
   "dev":"node ./build/dev-server.js"
 }
-注意：package.js中不能有注释。
 
-这样，我们就可以通过执行 npm run build 来进行构建，同时还增加了一条开启开发服务器的命令 npm run dev。
+/*
+循环换气可分为四步进行：
+一是先闭住嘴，将腹腔四周肌肉扩张，使腹内气压小于体外，气流自然就通过鼻腔抽进肺里。
+二是我们口腔里存在一个空间，自然也就存在一点气体，把这点气挤出来（而不是吹出来）就能振动葫芦丝的簧片，发出声音。
+三是练习抽气和挤气必须同时进行，绝不可一先一后，这是循环换气的关键。先练快换气，再练慢换气，练会换气过程长一点，吸气就可以多一点，深一点。
+四是练习让挤气和吹气的力度达到一致。由挤气转换成吹气的衔接处，声音往往会抖一下。这是由于挤的气弱，吹的气强，强气流突然冲动簧片的缘故。
+练习时可先控制吹气的力度，使之与挤气的力度一致，声音就平稳了。这是循环换气的第二个关键。
+
+学习循环换气的具体练习步骤：
+第一，首先练习'口腔挤腮吐气，同时鼻吸气'。1、扩大口腔可储存一定体积的气，如鼓腮。
+但这里不要求过分鼓腮，适当鼓腮就可。要从横向和竖向这两个方面来扩大口腔。
+横向扩大口腔可用鼓腮法；竖向扩大口腔可用发'呕'音或'我'音的方法来体会（但不可发出音），也就是口腔下巴向下运动。
+2、停止正常呼气，腮向内挤压吐气，实际是将口腔内的气挤压出去。这个动作可单独练习。
+3、练习鼻子快速吸气到腹部（腹部要向外膨胀）。这个动作可单独练习。
+4、练习'挤腮吐气和鼻吸气同时进行'。这两个动作同时进行，刚开始不习惯，因为一心不能二用。但练几天就习惯了。
+
+总结：
+1、鼻吸气完成时间要小于挤腮吐气完成时间，如挤腮吐气时间为4秒，则鼻吸气时间为1至2秒。
+2、初学向里挤压腮时，可以不用力挤，习惯后再稍加用力挤压腮。
+3、鼻吸气不要过猛过快，也不可太慢，鼻吸气尽量不要发出吸气声音，有一点声音为正常。
+第二，练习'嘴正常呼气到扩大口腔储气'。
+嘴正常呼气（指平时吹葫芦丝那样的呼气），然后过渡到扩大口腔储气，这个过程嘴正常呼气一直保持着。
+第三，以上两个步骤练顺后就可以开始操练循环换气的全过程了。
+
+空嘴来操练循环换气的全过程：
+第一步，'嘴正常呼气'（用腹式或胸腹式呼吸法）
+第二步，'口腔储存气'（保持第一步的正常呼气，扩大口腔容积，呼气还不能停止）
+第三步，'口腔挤腮吐气，同时鼻吸气'（上一步的呼气停止，变为挤腮嘴吐气，同时鼻子快速吸气到腹部，不要吸得过满）
+第四步，'接气'（口腔内还剩一半或三分之一多的气未挤完，继续挤腮吐气，同时将上一步吸到腹内的气慢慢呼出，与挤腮产生的气合在一起呼）
+（许多人采用吸管对着一杯水吹气，若是气泡可以不间断地产生，则算会了）
+在葫芦丝上学练循环换气：
+当空嘴学练循环换气稍熟后
+注意和要点：
+一、'口腔挤腮吐气，同时鼻吸气'是关键，要多加练习，可单独练习。鼻子吸气过程要短于挤腮过程。
+二、不要等到上口气快呼完了才开始循环换气。上口气呼出一半或三份之二时就要开始下一个循环换气了。
+三、接气是个难点，要平稳过渡（也叫软着陆），音量不要突然增大或减小。当然这需长期练习才能做到。
+*/
+/*
+重要的是要记住，在 webpack 配置中定义 rules 时，要定义在 module.rules 而不是 rules 中。为了使你受益于此，如果没有按照正确方式去做，webpack 会给出警告。
+请记住，使用正则表达式匹配文件时，你不要为它添加引号。也就是说，/\.txt$/ 与 '/\.txt$/'/ "/\.txt$/" 不一样。前者指示 webpack 匹配任何以 .txt 结尾的文件，后者指示 webpack 匹配具有绝对路径 '.txt' 的单个文件; 这可能不符合你的意图。
+在使用 loader 时，可以阅读 loader 章节 查看更深入的自定义配置。
+
+插件(plugin) 
+loader 用于转换某些类型的模块，而插件则可以用于执行范围更广的任务。包括：打包优化，资源管理，注入环境变量。
+
+插件接口(plugin interface) 功能极其强大，可以用来处理各种各样的任务。
+想要使用一个插件，你只需要 require() 它，然后把它添加到 plugins 数组中。多数插件可以通过选项(option)自定义。你也可以在一个配置文件中因为不同目的而多次使用同一个插件，这时需要通过使用 new 操作符来创建它的一个实例。
+
+webpack.config.js
+
+const HtmlWebpackPlugin = require('html-webpack-plugin'); // 通过 npm 安装
+const webpack = require('webpack'); // 用于访问内置插件
+
+module.exports = {
+  module: {
+    rules: [
+      { test: /\.txt$/, use: 'raw-loader' }
+    ]
+  },
+  plugins: [
+    new HtmlWebpackPlugin({template: './src/index.html'})
+  ]
+};
+在上面的示例中，html-webpack-plugin 为应用程序生成 HTML 一个文件，并自动注入所有生成的 bundle。
+
+webpack 提供许多开箱可用的插件！查阅 插件列表 获取更多。
+在 webpack 配置中使用插件是简单直接的，然而也有很多值得我们进一步探讨的用例。查看这里了解更多。
+
+模式(mode) 
+通过选择 development, production 或 none 之中的一个，来设置 mode 参数，你可以启用 webpack 内置在相应环境下的优化。其默认值为 production。
+
+module.exports = {
+  mode: 'production'
+};
+查看 模式配置 章节了解其详细内容和每个值所作的优化。
+
+浏览器兼容性(browser compatibility) 
+webpack 支持所有符合 ES5 标准 的浏览器（不支持 IE8 及以下版本）。webpack 的 import() 和 require.ensure() 需要 Promise。如果你想要支持旧版本浏览器，在使用这些表达式之前，还需要 提前加载 polyfill。
+
+/**/
+/*import Vue from "vue/dist/vue.common.js";//Vue is not defind
+动态注册子组件var cn="top"
+		import("@/components/"+cn+".vue").then((component) => {
+									console.log(component)
+									 Vue.component(cn, component)    
+    //return Vue.extend(component)
+  })
+   import('./top.vue').then(cmp => {
+    mountCmp.call(this, cmp, {title: 123456}, document.getElementById("test"))
+      })
+
+    function mountCmp (cmp, props, parent) {
+cmp = Vue.extend(cmp.default)
+let node = document.createElement('div')
+parent.appendChild(node)
+new cmp({ //eslint-disable-line
+  el: node,
+  propsData: props,
+  parent: this
+})
+}
+
+
+
+*/

@@ -3,7 +3,11 @@ const path = require('path');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 //var HtmlWebpackPlugin = require('html-webpack-plugin');
 /*
-   ExtractTextPlugin属性1.id:此为插件的唯一标识，默认为自动生成。2.filename:定义文件的名称。如果有多个入口文件时，应该定义为：[name].css。3.allChunks:当使用 `CommonsChunkPlugin` 并且在公共 chunk 中有提取的 chunk（来自`ExtractTextPlugin.extract`）时，`allChunks` **必须设置为 `true`。4.ignoreOrder:禁用顺序检查 (这对 CSS 模块很有用！)，默认 `false`。5.disable:禁用插件
+   ExtractTextPlugin属性1.id:插件的唯一标识，默认为自动生成。
+   2.filename:定义文件的名称。如果有多个入口文件时，应该定义为：[name].css。
+   3.allChunks:当使用 `CommonsChunkPlugin` 并且在公共 chunk 中有提取的 chunk（来自`ExtractTextPlugin.extract`）时，`allChunks` **必须设置为 `true`。
+   4.ignoreOrder:禁用顺序检查 (这对 CSS 模块很有用！)，默认 `false`。
+   5.disable:禁用插件
 */
 const VueLoaderPlugin = require('vue-loader/lib/plugin'); 
 module.exports={
@@ -113,16 +117,19 @@ module.exports={
 /*配置webpack-dev-server*/
 devServer:{
 	contentBase:'./public'
-}
+},
 //防止重复
 /*
   optimization: {
      splitChunks: {
        chunks: 'all'
      }
-  },
-   plugins:[new VueLoaderPlugin(),
-       new ExtractTextPlugin("style.css"),
-   ] 
-   */
+  },   */
+
+
+  plugins: [
+    // make sure to include the plugin for the magic
+    new VueLoaderPlugin(),
+   new ExtractTextPlugin("style.css"),
+],
 };

@@ -1,5 +1,5 @@
 //main.js 
-import router from './js/router.js'
+//import router from './js/router.js'
 const a = require('./js/a.js');
 const b = require('./js/b.js');
 require('./css/a.css');
