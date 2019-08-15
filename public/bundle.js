@@ -276,7 +276,7 @@ eval("// removed by extract-text-webpack-plugin\n\n//# sourceURL=webpack:///./sr
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\n// a.js\nmodule.exports = function () {\n  var a = document.createElement('div');\n  a.innerHTML = \"a\" + Math.random();\n  return a;\n};\n\n//# sourceURL=webpack:///./src/js/a.js?");
+eval("\n\n// a.js\nmodule.exports = function () {\n  var a = document.createElement('div');\n  a.innerHTML = \"a\" + Math.random();\n  console.log(\"a.js\");\n  return a;\n};\n\n//# sourceURL=webpack:///./src/js/a.js?");
 
 /***/ }),
 
@@ -288,7 +288,7 @@ eval("\n\n// a.js\nmodule.exports = function () {\n  var a = document.createElem
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\n// b.js\nmodule.exports = function () {\n  var b = document.createElement('div');\n  b.innerHTML = \"b\" + Math.random();\n  return b;\n};\n\n//# sourceURL=webpack:///./src/js/b.js?");
+eval("\n\n// b.js\nmodule.exports = function () {\n  var b = document.createElement('div');\n  b.innerHTML = \"b\" + Math.random();\n  console.log(\"b.js\");\n  return b;\n};\n\n//# sourceURL=webpack:///./src/js/b.js?");
 
 /***/ }),
 
@@ -300,7 +300,7 @@ eval("\n\n// b.js\nmodule.exports = function () {\n  var b = document.createElem
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", {\n  value: true\n});\n\nvar _vue = __webpack_require__(/*! vue */ \"./node_modules/vue/dist/vue.runtime.esm.js\");\n\nvar _vue2 = _interopRequireDefault(_vue);\n\nvar _vueRouter = __webpack_require__(/*! vue-router */ \"./node_modules/vue-router/dist/vue-router.esm.js\");\n\nvar _vueRouter2 = _interopRequireDefault(_vueRouter);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\n// router.js\n_vue2.default.use(_vueRouter2.default);\nvar index = function index(r) {\n  return __webpack_require__.e(/*! require.ensure | index */ \"index\").then((function () {\n    return r(__webpack_require__(/*! ../page/index.vue */ \"./src/page/index.vue\"));\n  }).bind(null, __webpack_require__)).catch(__webpack_require__.oe);\n};\nvar login = function login(r) {\n  return __webpack_require__.e(/*! require.ensure | login */ \"login\").then((function () {\n    return r(__webpack_require__(/*! ../page/login.vue */ \"./src/page/login.vue\"));\n  }).bind(null, __webpack_require__)).catch(__webpack_require__.oe);\n};\nvar reg = function reg(r) {\n  return __webpack_require__.e(/*! require.ensure | login */ \"login\").then((function () {\n    return r(__webpack_require__(/*! ../page/reg.vue */ \"./src/page/reg.vue\"));\n  }).bind(null, __webpack_require__)).catch(__webpack_require__.oe);\n};\nvar router = new _vueRouter2.default({\n  mode: 'history',\n  routes: [{\n    path: '/login',\n    name: 'login',\n    component: login\n  }, {\n    path: '/reg',\n    name: 'reg',\n    component: reg\n  }, {\n    path: '/',\n    name: 'index',\n    component: index\n  }] });\nexports.default = router;\n\n//# sourceURL=webpack:///./src/js/router.js?");
+eval("\n\nObject.defineProperty(exports, \"__esModule\", {\n  value: true\n});\n\nvar _vue = __webpack_require__(/*! vue */ \"./node_modules/vue/dist/vue.runtime.esm.js\");\n\nvar _vue2 = _interopRequireDefault(_vue);\n\nvar _vueRouter = __webpack_require__(/*! vue-router */ \"./node_modules/vue-router/dist/vue-router.esm.js\");\n\nvar _vueRouter2 = _interopRequireDefault(_vueRouter);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\n// router.js\n_vue2.default.use(_vueRouter2.default);\nvar index = function index(r) {\n  return __webpack_require__.e(/*! require.ensure | index */ \"index\").then((function () {\n    return r(__webpack_require__(/*! ../page/index.vue */ \"./src/page/index.vue\"));\n  }).bind(null, __webpack_require__)).catch(__webpack_require__.oe);\n};\nvar login = function login(r) {\n  return __webpack_require__.e(/*! require.ensure | login */ \"login\").then((function () {\n    return r(__webpack_require__(/*! ../page/login.vue */ \"./src/page/login.vue\"));\n  }).bind(null, __webpack_require__)).catch(__webpack_require__.oe);\n};\nvar reg = function reg(r) {\n  return __webpack_require__.e(/*! require.ensure | login */ \"login\").then((function () {\n    return r(__webpack_require__(/*! ../page/reg.vue */ \"./src/page/reg.vue\"));\n  }).bind(null, __webpack_require__)).catch(__webpack_require__.oe);\n};\nvar router = new _vueRouter2.default({\n  //mode: 'history',\n  routes: [{\n    path: '/login',\n    name: 'login',\n    component: login\n  }, {\n    path: '/reg',\n    name: 'reg',\n    component: reg\n  }, {\n    path: '/',\n    name: 'index',\n    component: index\n  }] });\nexports.default = router;\n\n//# sourceURL=webpack:///./src/js/router.js?");
 
 /***/ }),
 

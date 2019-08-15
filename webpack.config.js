@@ -127,14 +127,15 @@ module.exports={
 ],
 /*配置webpack-dev-server*/
 devServer:{
+   contentBase:'./public',
+ /*  assetsSubDirectory: 'static',
+   assetsPublicPath: '/',
+   proxyTable: {},*/
 
-  contentBase:'./public',
-    /*compress:true,
+  compress:true,
   host:'localhost',
   port:9999,
-  autoOpenBrowser: true,*/
   open:true,//自动打开站点首页
-  port:9999,//把默认端口号8080修改成9000
   inline:true,//浏览器页面自动刷新
 },/*
 build: {

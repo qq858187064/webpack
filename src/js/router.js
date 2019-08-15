@@ -6,7 +6,7 @@ const index = r => require.ensure([], () => r(require('../page/index.vue')), 'in
 const login = r => require.ensure([], () => r(require('../page/login.vue')), 'login');
 const reg = r => require.ensure([], () => r(require('../page/reg.vue')), 'login');
 const router = new Router({
-  mode: 'history',
+  //mode: 'history',
   routes: [
 {
       path: '/login', 
