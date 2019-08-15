@@ -114,22 +114,34 @@ module.exports={
           */
     ]
 　　},
-/*配置webpack-dev-server*/
-devServer:{
-	contentBase:'./public'
-},
 //防止重复
-/*
   optimization: {
      splitChunks: {
        chunks: 'all'
      }
-  },   */
-
-
+  },   
   plugins: [
     // make sure to include the plugin for the magic
     new VueLoaderPlugin(),
    new ExtractTextPlugin("style.css"),
 ],
+/*配置webpack-dev-server*/
+devServer:{
+
+  contentBase:'./public',
+    /*compress:true,
+  host:'localhost',
+  port:9999,
+  autoOpenBrowser: true,*/
+  open:true,//自动打开站点首页
+  port:9999,//把默认端口号8080修改成9000
+  inline:true,//浏览器页面自动刷新
+},/*
+build: {
+  index: path.resolve(__dirname, '../public/index.html'),
+  assetsRoot: path.resolve(__dirname, '../public'),
+  productionSourceMap: false,
+  productionGzip: false,
+  productionGzipExtensions: ['js', 'css'],
+}*/
 };
